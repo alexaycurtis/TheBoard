@@ -213,7 +213,7 @@ const WhiteboardApp: React.FC = () =>{
           subtitle: 'Statistic Label',
           padding: 20
         };
-        break;
+        break;   
       case 'tag-pill':
         newElement ={
           ...newElement,
@@ -224,6 +224,124 @@ const WhiteboardApp: React.FC = () =>{
           content: 'Tag',
           padding: 8,
           fontSize: 13
-        };
-        break;
+        };    
+        break;   
+    } /*i love switch cases*/    
+
+    /*forgot to add this last commit*/
+    setElements([...elements, newElement]);
+    setSelectedId(newElement.id);
+    if(type === 'text'){
+      setTimeout(()=> setEditingId(newElement.id), 100);
     }
+  };
+
+  //click down on an element to start dragging it
+  const handleMouseDown = (e: React.MouseEvent, id: string) =>{
+    const element = elements.find(el => el.id === id);//identify element clicked on
+    if(element?.locked || editingId === id) return; //don't move locked items or currently editing
+
+    e.stopPropagation();
+    setSelectedId(id);//set status to selected
+    setDragging(id);
+    const rect = e.currentTarget.getBoundingClientRect();///get the location of where element was clicked so it doesn't glitch around
+    setDragOffset({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top
+    });
+  };
+
+  //resize box
+  const handleResizeStart = (e: React.MouseEvent, id: string) => {
+    const element = elements.find(el => el.id === id);
+    if(element?.locked) return;
+
+    e.stopPropagation();
+    setResizing(id);//set status as resizing
+    setResizeStart({
+      x: e.clientX,
+      y: e.clientY,
+      width: element?.width || 0,
+      height: element?.height || 0
+    });
+  };
+
+  /*Learned this from the documentation*/
+  const handleMouseMove = (e: React.MouseEvent) =>{//while mouse is moving do
+    if(dragging && canvasRef.current){
+      const canvasRect = canvasRef.current.getBoundingClientRect();
+      const newX = e.clientX - canvasRect.left - dragOffset.x;
+      const newY = e.clientY - canvasRect.top - dragOffset.y;
+
+      /*Learned this from a tutorial*/
+      //updates the element position with grid snapping
+      setElements(elements.map(el =>
+        el.id === dragging
+          ?{
+              ...el,
+              x: snapToGrid(newX),
+              y: snapToGrid(newY)
+            }
+          :el
+      ));
+    } 
+    else if (resizing){
+      const dx = e.clientX - resizeStart.x;
+      const dy = e.clientY - resizeStart.y;
+      //calculate new size
+      const newWidth = Math.max(50, resizeStart.width + dx);
+      const newHeight = Math.max(30, resizeStart.height + dy);
+
+      //update size
+      setElements(elements.map(el =>
+        el.id === resizing
+          ? {
+              ...el,
+              width: snapToGrid(newWidth),
+              height: snapToGrid(newHeight)
+            }
+          : el
+      ));
+    }
+  };
+
+  //when let go of mouse, stop dragging/resizing
+  const handleMouseUp = () =>{
+    setDragging(null);
+    setResizing(null);
+  };
+
+  //double click to edit non-locked text
+  const handleDoubleClick = (id: string) =>{
+    const element = elements.find(el => el.id === id);
+    if(element?.type === 'text' && !element.locked){
+      setEditingId(id);
+    }
+  };
+
+  //typing inside textbox
+  const handleTextChange = (id: string, value: string) =>{
+    updateElement(id, { content: value });
+  };
+
+  //stop editing when click away from textbox
+  const handleTextBlur = () =>{
+    setEditingId(null);
+  };
+
+  /*From tutorial*/
+  //When image is uploaded do
+  const handleImageUpload = (id: string, file: File) =>{
+    const reader = new FileReader();//use filereader
+    reader.onload = (e) => {
+      const imageUrl = e.target?.result as string;
+      updateElement(id, { imageUrl });
+    };
+    reader.readAsDataURL(file);
+  };
+
+  /*Also from tutorial - func to update any property of an element*/
+  const updateElement = (id: string, updates: Partial<Element>) =>{
+    //for each element, implement updates
+    setElements(elements.map(el => el.id === id ? { ...el, ...updates } : el));
+  };               
