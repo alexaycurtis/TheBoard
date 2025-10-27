@@ -494,4 +494,224 @@ const WhiteboardApp: React.FC = () =>{
 
   //currently selected element
   const selectedElement = elements.find(el => el.id === selectedId);
-  
+  return(
+  /*Typed CSS for the block elements*/
+
+  /*Canvas css and card html*/
+     <div   //canvas
+        className="flex-1 relative overflow-auto bg-slate-700"
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
+      >
+        <div
+          ref=  {canvasRef}
+          className="relative bg-slate-800"
+          style={{
+            //same measurements as saved space
+            width: '1920px',
+            height: '1080px',
+            backgroundImage: `
+              linear-gradient(to right, rgba(71, 85, 105, 0.15) 1px, transparent 1px),
+              linear-gradient(to bottom, rgba(71, 85, 105, 0.15) 1px, transparent 1px)
+            `,
+            backgroundSize: `${GRID_SIZE}px ${GRID_SIZE}px`
+          }}
+          onClick={()=>{
+            setSelectedId(null);
+            setEditingId(null);
+          }}
+        ></div>
+
+        <div className="absolute inset-0" style={{ width: '1920px', height: '1080px' }}>
+        {elements.map((element)=>(
+          <div
+            key={element.id}
+            //change cursor based on element 
+            //no cursor for locked elements
+            className={`absolute ${element.locked ? 'cursor-not-allowed' : editingId === element.id ? 'cursor-text' : 'cursor-move'} transition-shadow ${
+              //highlight selected element w/blue
+              selectedId === element.id ? 'ring-2 ring-blue-400 shadow-lg' : ''
+            }`}
+            style={{
+              left: element.x,
+              top: element.y,
+              width: element.width,
+              height: element.height,
+              backgroundColor: element.backgroundColor,
+              borderRadius: element.borderRadius,
+              padding: element.padding,
+              zIndex: element.zIndex,
+              pointerEvents: editingId === element.id ? 'auto' : 'auto'
+            }}
+            //handle dragging items that arzen't currently being edited
+            onMouseDown={(e)=>{
+              if(editingId !== element.id){
+                handleMouseDown(e, element.id);
+              }
+            }}
+            //enter edit mode by double click
+            onDoubleClick={() => handleDoubleClick(element.id)}
+            //single click to select elements
+            onClick={(e)=>{
+              e.stopPropagation();
+              if(editingId !== element.id){
+                setSelectedId(element.id);
+              }
+            }}
+          >
+             {/*text element*/}
+            {element.type === 'text' && editingId === element.id ? (
+              <textarea
+                ref={textareaRef}
+                value={element.content}
+                onChange={(e) => handleTextChange(element.id, e.target.value)}
+                onBlur={handleTextBlur}
+                onClick={(e) => e.stopPropagation()}
+                onMouseDown={(e) => e.stopPropagation()}
+                style={{
+                  fontSize: element.fontSize,
+                  fontWeight: element.fontWeight,
+                  textAlign: element.textAlign as any,
+                  color: '#333',
+                  width: '100%',
+                  height: '100%',
+                  resize: 'none',
+                  border: 'none',
+                  outline: 'none',
+                  backgroundColor: 'transparent',
+                  fontFamily: 'inherit'
+                }}
+                className="overflow-hidden"
+              />
+            ) : element.type === 'text' ? (
+              <div
+                style={{
+                  fontSize: element.fontSize,
+                  fontWeight: element.fontWeight,
+                  textAlign: element.textAlign as any,
+                  color: '#333',
+                  width: '100%',
+                  height: '100%',
+                  overflow: 'hidden',
+                  whiteSpace: 'pre-wrap',
+                  wordBreak: 'break-word'
+                }}
+              >
+                {element.content || 'Double click to edit'}
+              </div>
+            ) : null}
+
+            {/*container element*/}
+            {element.type === 'container' &&(
+              <div className="w-full h-full" />
+            )}
+
+            {/*circle element*/}
+            {element.type === 'circle' &&(
+              <div className="w-full h-full" />
+            )}   
+
+            {/*image element*/}
+            {element.type === 'image' && (
+              <div className="w-full h-full bg-slate-300 flex items-center justify-center rounded-lg overflow-hidden">
+                {element.imageUrl ? (
+                  <img src={element.imageUrl} alt="Uploaded" className="w-full h-full object-cover" />
+                ) : (
+                  <Image className="w-12 h-12 text-slate-500" />
+                )}
+              </div>
+            )}
+
+            {/*pc card element*/}
+            {element.type === 'profile-card' && (
+              <div className="w-full h-full flex flex-col justify-between">
+                <div>
+                  <div className="text-xs text-gray-500 mb-2">Category</div>
+                  <h2 className="text-4xl font-bold text-gray-800 mb-2">{element.title || 'Profile Name'}</h2>
+                  <p className="text-gray-600">{element.subtitle || 'A brief description or tagline about this profile...'}</p>
+                </div>
+                <button className="self-start px-6 py-2 bg-white rounded-full text-sm font-medium border border-gray-300">
+                  Read More
+                </button>
+              </div>
+            )}
+
+             {/*art card element*/}
+            {element.type === 'artwork-card' && (
+              <div className="w-full h-full flex flex-col justify-end">
+                <div className="bg-black/30 backdrop-blur-sm text-white text-xs p-2 rounded-b-lg">
+                  {element.content || 'by @username'}
+                </div>
+              </div>
+            )}
+
+             {/*info card element*/}
+            {element.type === 'info-card' && (
+              <div className="w-full h-full flex items-center gap-3">
+                <div className="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <Circle className="w-6 h-6 text-gray-400" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold text-gray-800 text-sm truncate">{element.title || 'Info Title'}</h3>
+                  <p className="text-xs text-gray-500 line-clamp-2">{element.subtitle || 'Info description text'}</p>
+                </div>
+              </div>
+            )}
+
+             {/*character card element*/}
+            {element.type === 'avatar' && (
+              <div className="w-full h-full flex items-center justify-center">
+                <div className="w-3/4 h-3/4 bg-white/50 rounded-full flex items-center justify-center">
+                  <Image className="w-1/2 h-1/2 text-gray-400" />
+                </div>
+              </div>
+            )}
+
+             {/*fc card element*/}
+            {element.type === 'feature-card' && (
+              <div className="w-full h-full flex flex-col justify-between">
+                <div>
+                  <div className="w-12 h-12 bg-blue-100 rounded-lg mb-3 flex items-center justify-center">
+                    <Circle className="w-6 h-6 text-blue-600" />
+                  </div>
+                  <h3 className="font-semibold text-gray-800 text-lg mb-2">{element.title || 'Feature Title'}</h3>
+                  <p className="text-sm text-gray-600">{element.subtitle || 'Feature description and benefits'}</p>
+                </div>
+              </div>
+            )}
+
+             {/*stat card element*/}
+            {element.type === 'stat-card' && (
+              <div className="w-full h-full flex flex-col justify-center items-center text-center">
+                <h2 className="text-3xl font-bold text-gray-800 mb-1">{element.title || '1,234'}</h2>
+                <p className="text-sm text-gray-600">{element.subtitle || 'Statistic Label'}</p>
+              </div>
+            )}
+
+             {/*unused*/}
+            {element.type === 'tag-pill' &&(
+              <div className="w-full h-full flex items-center justify-center">
+                <span className="text-sm font-medium text-gray-700">{element.content || 'Tag'}</span>
+              </div>
+            )}
+
+            {selectedId === element.id && !element.locked && editingId !== element.id &&(
+              <>
+                <div
+                  className="absolute -bottom-2 -right-2 w-4 h-4 bg-blue-500 rounded-full cursor-nwse-resize z-10"
+                  onMouseDown={(e) => handleResizeStart(e, element.id)}
+                />
+              </>
+            )}
+
+            {element.locked &&(   
+              <div className="absolute top-2 right-2 bg-slate-700 rounded p-1">
+                <Lock className="w-3 h-3 text-slate-300" />
+              </div>
+            )}
+          </div>
+        ))}
+        </div>
+      </div>
+    )
