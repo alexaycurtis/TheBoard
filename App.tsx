@@ -235,7 +235,7 @@ const WhiteboardApp: React.FC = () =>{
       setTimeout(()=> setEditingId(newElement.id), 100);
     }
   };
-
+    
   //click down on an element to start dragging it
   const handleMouseDown = (e: React.MouseEvent, id: string) =>{
     const element = elements.find(el => el.id === id);//identify element clicked on
@@ -339,9 +339,10 @@ const WhiteboardApp: React.FC = () =>{
     };
     reader.readAsDataURL(file);
   };
-
+  
   /*Also from tutorial - func to update any property of an element*/
   const updateElement = (id: string, updates: Partial<Element>) =>{
     //for each element, implement updates
     setElements(elements.map(el => el.id === id ? { ...el, ...updates } : el));
-  };               
+  };                                       
+  
