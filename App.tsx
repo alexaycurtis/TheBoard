@@ -344,5 +344,154 @@ const WhiteboardApp: React.FC = () =>{
   const updateElement = (id: string, updates: Partial<Element>) =>{
     //for each element, implement updates
     setElements(elements.map(el => el.id === id ? { ...el, ...updates } : el));
-  };                                       
+  };        
+
+  //deletion
+  const deleteElement = () =>{
+    if(selectedId){
+      setElements(elements.filter(el => el.id !== selectedId));
+      setSelectedId(null);
+      setEditingId(null);
+    }
+  };
+
+  //copy selected element
+  const duplicateElement = () =>{
+    if(selectedId){
+      const element = elements.find(el => el.id === selectedId);
+      if(element){
+        //creation of new element w/ same properties
+        const newElement = {
+          ...element,
+          id: `element-${Date.now()}`,
+          x: element.x + 20,
+          y: element.y + 20,
+          zIndex: elements.length
+        };
+        setElements([...elements, newElement]);
+        setSelectedId(newElement.id);
+      }
+    }
+  };
+
+  //locking for elements
+  const toggleLock = () =>{
+    if(selectedId){
+      const element = elements.find(el => el.id === selectedId);
+      updateElement(selectedId, {locked: !element?.locked });
+    }
+  };
+
+  /*The following code for exporting the board as an image was dervied from tutorial videos and documentation*/
+  //export whiteboard as png
+  const downloadAsImage = async () => {
+    //make transparent canvas to draw board onto
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;//to prevent bugs from failure
+
+    //fixed size 
+    canvas.width = 1920;
+    canvas.height = 1080;
+
+    //fill backgrund
+    ctx.fillStyle = '#1e293b';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    //draw grid
+    ctx.strokeStyle = 'rgba(71, 85, 105, 0.15)';
+    ctx.lineWidth = 1;
+    for(let x = 0; x <= canvas.width; x += GRID_SIZE) {
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, canvas.height);
+      ctx.stroke();
+    }
+    for(let y = 0; y <= canvas.height; y += GRID_SIZE) {
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(canvas.width, y);
+      ctx.stroke();
+    }
+
+    //Helper function for rounded rectangles
+    const roundRect = (x: number, y: number, width: number, height: number, radius: number) => {
+      ctx.beginPath();
+      ctx.moveTo(x + radius, y);
+      ctx.lineTo(x + width - radius, y);
+      ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+      ctx.lineTo(x + width, y + height - radius);
+      ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+      ctx.lineTo(x + radius, y + height);
+      ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+      ctx.lineTo(x, y + radius);
+      ctx.quadraticCurveTo(x, y, x + radius, y);
+      ctx.closePath();
+    };
+
+    //loop through each element to draw on canvas
+    for (const el of elements) {
+      ctx.save();
+
+      //backgrounds
+      if(el.backgroundColor && el.backgroundColor !== 'transparent') {
+        ctx.fillStyle = el.backgroundColor;
+        if(el.borderRadius && el.borderRadius > 0) {
+          roundRect(el.x, el.y, el.width, el.height, el.borderRadius);
+          ctx.fill();
+        } 
+        else {
+          ctx.fillRect(el.x, el.y, el.width, el.height);
+        }
+      }
+
+      //text elements
+      if(el.type === 'text' && el.content){
+        ctx.fillStyle = '#333';
+        ctx.font = `${el.fontWeight || 'normal'} ${el.fontSize || 16}px sans-serif`;
+        ctx.textAlign = (el.textAlign || 'left') as CanvasTextAlign;
+        ctx.textBaseline = 'top';
+
+        //place text according to position
+        const padding = el.padding || 0;
+        let textX = el.x + padding;
+        if (el.textAlign === 'center') textX = el.x + el.width / 2;
+        else if (el.textAlign === 'right') textX = el.x + el.width - padding;
+
+        //draw text
+        ctx.fillText(el.content, textX, el.y + padding);
+      }
+
+      //draw images
+      if(el.type === 'image' && el.imageUrl){
+        const img = new Image();
+        img.src = el.imageUrl;
+        await new Promise<void>((resolve) =>{
+          img.onload = () => {
+            ctx.drawImage(img, el.x, el.y, el.width, el.height);
+            resolve();
+          };
+          img.onerror = () => resolve();
+        });
+      }
+
+      ctx.restore();
+    }
+
+    //download
+    canvas.toBlob((blob) => {
+      if(blob){
+        //temp download link creation
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `whiteboard-1920x1080-${Date.now()}.png`;
+        link.click();
+        URL.revokeObjectURL(url);
+      }
+    });
+  };
+
+  //currently selected element
+  const selectedElement = elements.find(el => el.id === selectedId);
   
