@@ -827,14 +827,108 @@ const WhiteboardApp: React.FC = () =>{
                 disabled={selectedElement.locked}
               />
             </div>
-      
-   
           </div>     
+          {selectedElement.type === 'text' &&(
+              <>
+                <div>
+                  <label className="text-slate-300 text-sm mb-2 block">Font Size</label>
+                  <input
+                    type="number"
+                    value={selectedElement.fontSize || 16}
+                    onChange={(e) => updateElement(selectedElement.id, { fontSize: parseInt(e.target.value) || 16 })}
+                    className="w-full px-3 py-2 bg-slate-800 text-slate-200 rounded text-sm"
+                    disabled={selectedElement.locked}
+                  />
+                </div>
+                <div>
+                  <label className="text-slate-300 text-sm mb-2 block">Text Align</label>
+                  <select
+                    value={selectedElement.textAlign || 'left'}
+                    onChange={(e) => updateElement(selectedElement.id, { textAlign: e.target.value })}
+                    className="w-full px-3 py-2 bg-slate-800 text-slate-200 rounded text-sm"
+                    disabled={selectedElement.locked}
+                  >
+                    <option value="left">Left</option>
+                    <option value="center">Center</option>
+                    <option value="right">Right</option>
+                  </select>
+                </div>
+              </>
+            )}
+
+          {/*added profile card element*/}
+            {(selectedElement.type === 'profile-card' || selectedElement.type === 'info-card' || selectedElement.type === 'feature-card' || selectedElement.type === 'stat-card') && (
+              <>
+                <div>
+                  <label className="text-slate-300 text-sm mb-2 block">Title</label>
+                  <input
+                    type="text"
+                    value={selectedElement.title || ''}
+                    onChange={(e) => updateElement(selectedElement.id, { title: e.target.value })}
+                    className="w-full px-3 py-2 bg-slate-800 text-slate-200 rounded text-sm"
+                    disabled={selectedElement.locked}
+                  />
+                </div>
+                <div>
+                  {/*subtitle for card*/}
+                  <label className="text-slate-300 text-sm mb-2 block">Subtitle</label>
+                  <textarea
+                    value={selectedElement.subtitle || ''}
+                    onChange={(e) => updateElement(selectedElement.id, { subtitle: e.target.value })}
+                    className="w-full px-3 py-2 bg-slate-800 text-slate-200 rounded text-sm"
+                    rows={3}
+                    disabled={selectedElement.locked}
+                  />
+                </div>
+              </>
+            )}
+          {/*artwork card element*/}
+            {(selectedElement.type === 'artwork-card' || selectedElement.type === 'search-pill' || selectedElement.type === 'tag-pill') && (
+              <div>
+                <label className="text-slate-300 text-sm mb-2 block">Content Text</label>
+                <input
+                  type="text"
+                  value={selectedElement.content || ''}
+                  onChange={(e) => updateElement(selectedElement.id, { content: e.target.value })}
+                  className="w-full px-3 py-2 bg-slate-800 text-slate-200 rounded text-sm"
+                  disabled={selectedElement.locked}
+                />
+              </div>
+            )}
+
+          {/*image block element*/}
+            {selectedElement.type === 'image' && (
+              <div>
+                <label className="text-slate-300 text-sm mb-2 block">Upload Image</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) =>{
+                    const file = e.target.files?.[0];
+                    if(file){
+                      handleImageUpload(selectedElement.id, file);
+                    }
+                  }}
+                  className="w-full px-3 py-2 bg-slate-800 text-slate-200 rounded text-sm file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-slate-700 file:text-slate-200 hover:file:bg-slate-600"
+                  disabled={selectedElement.locked}
+                />
+                {selectedElement.imageUrl &&(
+                {/*remove image button*/}
+                  <button
+                    onClick={() => updateElement(selectedElement.id, {imageUrl: undefined })}
+                    className="mt-2 w-full px-3 py-2 bg-red-600 hover:bg-red-500 rounded text-white text-sm"
+                    disabled={selectedElement.locked}
+                  >
+                    Remove Image
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       )}
-    </div>    
-  );    
+    </div>
+  );                                 
 };
-                                                       
-export default WhiteboardApp;              
-  
+
+export default WhiteboardApp;                        
