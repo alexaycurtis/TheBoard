@@ -709,9 +709,132 @@ const WhiteboardApp: React.FC = () =>{
               <div className="absolute top-2 right-2 bg-slate-700 rounded p-1">
                 <Lock className="w-3 h-3 text-slate-300" />
               </div>
-            )}
+            )}    
           </div>
         ))}
         </div>
       </div>
-    )
+    //html and css for editing panel next
+    {selectedElement &&(
+        <div className="w-72 bg-slate-900/50 backdrop-blur border-l border-slate-700 p-4 overflow-y-auto">
+          <h3 className="text-slate-200 font-semibold mb-4">Properties</h3>
+          <div className="space-y-4">
+            <div className="flex gap-2">
+
+              {/*copy and paste element button*/}
+              <button
+                onClick={duplicateElement}
+                className="flex-1 px-3 py-2 bg-slate-700 hover:bg-slate-600 rounded text-slate-200 text-sm flex items-center justify-center gap-2"
+                title="Duplicate (Ctrl+D)"
+              >
+                <Copy className="w-4 h-4" />
+                Duplicate
+              </button>
+              {/*lock element button*/}
+              <button
+                onClick={toggleLock}
+                className="flex-1 px-3 py-2 bg-slate-700 hover:bg-slate-600 rounded text-slate-200 text-sm flex items-center justify-center gap-2"
+                title="Lock/Unlock (Ctrl+L)"
+              >
+                {selectedElement.locked ? <Lock className="w-4 h-4" /> : <Unlock className="w-4 h-4" />}
+                {selectedElement.locked ? 'Unlock' : 'Lock'}
+              </button>
+              {/*trashcan button*/}
+              <button
+                onClick={deleteElement}
+                className="px-3 py-2 bg-red-600 hover:bg-red-500 rounded text-white text-sm flex items-center justify-center"
+                title="Delete (Del)"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            </div>
+            
+            {/*list  of controls*/}
+            <div className="text-slate-400 text-xs p-2 bg-slate-800 rounded">
+              <div>Arrow keys: Move (Shift for 10px)</div>
+              <div>Delete/Backspace: Remove</div>
+              <div>Ctrl+D: Duplicate</div>
+              <div>Ctrl+L: Lock/Unlock</div>
+            </div>
+            {/*options for adjusting elements*/}
+            <div>
+              <label className="text-slate-300 text-sm mb-2 block">Position</label>
+              <div className="flex gap-2">
+                <input
+                  type="number"
+                  value={Math.round(selectedElement.x)}
+                  onChange={(e) => updateElement(selectedElement.id, { x: parseInt(e.target.value) || 0 })}
+                  className="flex-1 px-3 py-2 bg-slate-800 text-slate-200 rounded text-sm"
+                  placeholder="X"
+                  disabled={selectedElement.locked}
+                />
+                <input
+                  type="number"
+                  value={Math.round(selectedElement.y)}
+                  onChange={(e) => updateElement(selectedElement.id, { y: parseInt(e.target.value) || 0 })}
+                  className="flex-1 px-3 py-2 bg-slate-800 text-slate-200 rounded text-sm"
+                  placeholder="Y"
+                  disabled={selectedElement.locked}
+                />
+              </div>
+            </div>
+            
+            {/*cont*/}
+            <div>
+              <label className="text-slate-300 text-sm mb-2 block">Size</label>
+              <div className="flex gap-2">
+                <input
+                  type="number"
+                  value={Math.round(selectedElement.width)}
+                  onChange={(e) => updateElement(selectedElement.id, { width: parseInt(e.target.value) || 50 })}
+                  className="flex-1 px-3 py-2 bg-slate-800 text-slate-200 rounded text-sm"
+                  placeholder="Width"
+                  disabled={selectedElement.locked}
+                />
+                <input
+                  type="number"
+                  value={Math.round(selectedElement.height)}
+                  onChange={(e) => updateElement(selectedElement.id, {height: parseInt(e.target.value) || 30 })}
+                  className="flex-1 px-3 py-2 bg-slate-800 text-slate-200 rounded text-sm"
+                  placeholder="Height"
+                  disabled={selectedElement.locked}
+                />
+              </div>
+            </div>
+
+            {/*adjust background color*/}
+            <div>
+              <label className="text-slate-300 text-sm mb-2 block">Background Color</label>
+              <input
+                type="color"
+                value={selectedElement.backgroundColor || '#ffffff'}
+                onChange={(e) => updateElement(selectedElement.id, {backgroundColor: e.target.value})}
+                className="w-full h-10 bg-slate-800 rounded cursor-pointer"
+                disabled={selectedElement.locked}
+              />
+            </div>
+
+            {/*adjust border radius attribute*/}
+            <div>   
+              <label className="text-slate-300 text-sm mb-2 block">Border Radius</label>
+              <input
+                type="range"
+                min="0"
+                max="50"
+                value={selectedElement.borderRadius || 0}
+                onChange={(e) => updateElement(selectedElement.id, { borderRadius: parseInt(e.target.value) })}
+                className="w-full"
+                disabled={selectedElement.locked}
+              />
+            </div>
+      
+   
+          </div>     
+        </div>
+      )}
+    </div>    
+  );    
+};
+                                                       
+export default WhiteboardApp;              
+  
