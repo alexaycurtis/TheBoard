@@ -157,17 +157,17 @@ const WhiteboardApp: React.FC = () =>{
           content: 'by @creator'
         };
         break;
-      case 'search-pill':
+      case 'search-pill': //this used to be a search bar element, but I decided to make it a title box without changing the name
         newElement ={
           ...newElement,
-          width: 200,
-          height: 50,
+          width: 200,                        
+          height: 50,      
           backgroundColor: '#e07856',
           borderRadius: 25,
-          content: 'Search term',
+          content: 'Title Pill',
           padding: 12,
           fontSize: 14
-        };
+        };    
         break;
       case 'info-card':
         newElement ={
@@ -197,7 +197,7 @@ const WhiteboardApp: React.FC = () =>{
           height: 180,
           backgroundColor: '#ffffff',
           borderRadius: 20,
-          title: 'Feature Title',
+          title: 'Title',
           subtitle: 'Feature description and benefits',
           padding: 24
         };
@@ -210,7 +210,7 @@ const WhiteboardApp: React.FC = () =>{
           backgroundColor: '#e3f2fd',
           borderRadius: 16,
           title: '1,234',
-          subtitle: 'Statistic Label',
+          subtitle: 'Number Label',
           padding: 20
         };
         break;   
@@ -221,7 +221,7 @@ const WhiteboardApp: React.FC = () =>{
           height: 36,
           backgroundColor: '#f3e5f5',
           borderRadius: 18,
-          content: 'Tag',
+          content: 'Text',
           padding: 8,
           fontSize: 13
         };    
@@ -627,12 +627,12 @@ const WhiteboardApp: React.FC = () =>{
             {element.type === 'profile-card' && (
               <div className="w-full h-full flex flex-col justify-between">
                 <div>
-                  <div className="text-xs text-gray-500 mb-2">Category</div>
+                  <div className="text-xs text-gray-500 mb-2">Profile Card</div>
                   <h2 className="text-4xl font-bold text-gray-800 mb-2">{element.title || 'Profile Name'}</h2>
                   <p className="text-gray-600">{element.subtitle || 'A brief description or tagline about this profile...'}</p>
                 </div>
                 <button className="self-start px-6 py-2 bg-white rounded-full text-sm font-medium border border-gray-300">
-                  Read More
+                  Profile
                 </button>
               </div>
             )}
@@ -641,7 +641,7 @@ const WhiteboardApp: React.FC = () =>{
             {element.type === 'artwork-card' && (
               <div className="w-full h-full flex flex-col justify-end">
                 <div className="bg-black/30 backdrop-blur-sm text-white text-xs p-2 rounded-b-lg">
-                  {element.content || 'by @username'}
+                  {element.content || 'text'}
                 </div>
               </div>
             )}
@@ -659,12 +659,16 @@ const WhiteboardApp: React.FC = () =>{
               </div>
             )}
 
-             {/*character card element*/}
-            {element.type === 'avatar' && (
-              <div className="w-full h-full flex items-center justify-center">
-                <div className="w-3/4 h-3/4 bg-white/50 rounded-full flex items-center justify-center">
-                  <Image className="w-1/2 h-1/2 text-gray-400" />
-                </div>
+             {/*character image element*/}
+           {element.type === 'avatar' && (
+              <div className="w-full h-full flex items-center justify-center overflow-hidden">
+                {element.imageUrl ?(
+                  <img src={element.imageUrl} alt="Avatar" className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-3/4 h-3/4 bg-white/50 rounded-full flex items-center justify-center">
+                    <Image className="w-1/2 h-1/2 text-gray-400" />
+                  </div>
+                )}
               </div>
             )}
 
@@ -717,7 +721,20 @@ const WhiteboardApp: React.FC = () =>{
     //html and css for editing panel next
     {selectedElement &&(
         <div className="w-72 bg-slate-900/50 backdrop-blur border-l border-slate-700 p-4 overflow-y-auto">
-          <h3 className="text-slate-200 font-semibold mb-4">Properties</h3>
+          {/*added close panel button*/}  
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-slate-200 font-semibold">Properties</h3>
+            <button
+              onClick={() => setSelectedId(null)}
+              className="p-1 hover:bg-slate-700 rounded transition-colors"
+              title="Close panel"
+            >   
+              <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
           <div className="space-y-4">
             <div className="flex gap-2">
 
@@ -897,7 +914,7 @@ const WhiteboardApp: React.FC = () =>{
             )}
 
           {/*image block element*/}
-            {selectedElement.type === 'image' && (
+            {selectedElement.type === 'image' || selectedElement.type === 'avatar') && (
               <div>
                 <label className="text-slate-300 text-sm mb-2 block">Upload Image</label>
                 <input
