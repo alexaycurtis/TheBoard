@@ -31,7 +31,7 @@ jobs:
       id-token: write
     environment:
       name: github-pages
-      url: 'https://${{ shewireswords }}.github.io/${{ TheBoard }}/'
+      url: 'https://${{ alexaycurtis }}.github.io/${{ TheBoard }}/'
     steps:
       - name: Setup Pages
         uses: actions/configure-pages@v5
