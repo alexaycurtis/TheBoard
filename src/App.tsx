@@ -39,10 +39,12 @@ const App: React.FC = () =>{
   const canvasRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   /*Also from tutorial - func to update any property of an element*/
+
   const updateElement = useCallback((id: string, updates: Partial<Element>) =>{
     //for each element, implement updates
     setElements(elements.map(el => el.id === id ? { ...el, ...updates } : el));
-  }); 
+  }, [elements]); 
+
   //deletion
   const deleteElement = useCallback(() =>{
     if(selectedId){

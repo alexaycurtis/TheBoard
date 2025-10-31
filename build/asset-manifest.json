@@ -1,9 +1,13 @@
 {
   "files": {
-    "main.js": "/TheBoard/static/js/main.31d6cfe0.js",
-    "index.html": "/TheBoard/index.html"
+    "main.css": "/TheBoard/static/css/main.7a0a42fa.css",
+    "main.js": "/TheBoard/static/js/main.397caf8b.js",
+    "index.html": "/TheBoard/index.html",
+    "main.7a0a42fa.css.map": "/TheBoard/static/css/main.7a0a42fa.css.map",
+    "main.397caf8b.js.map": "/TheBoard/static/js/main.397caf8b.js.map"
   },
   "entrypoints": [
-    "static/js/main.31d6cfe0.js"
+    "static/css/main.7a0a42fa.css",
+    "static/js/main.397caf8b.js"
   ]
 }
