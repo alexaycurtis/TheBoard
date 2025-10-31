@@ -1,5 +1,6 @@
 import React, {useState, useRef, useEffect} from 'react';
 import {Plus, Type, Square, Circle, Image, Trash2, Copy, Lock, Unlock} from 'lucide-react';
+import './App.css';
 
 /*popout editing panel elements, looked up a list*/
 interface Element{     
@@ -25,7 +26,7 @@ interface Element{
   iconType?: string;
 }
 
-const WhiteboardApp: React.FC = () =>{
+const App: React.FC = () =>{
   const GRID_SIZE = 20; //grid cell size in pixels
 
   /*many editing properties that I researched that I needed*/
@@ -1052,4 +1053,4 @@ const WhiteboardApp: React.FC = () =>{
   );                                 
 };
 
-export default WhiteboardApp;                        
+export default App;                        
