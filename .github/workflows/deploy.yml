@@ -22,7 +22,8 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'build/.'
+          # Vite outputs to `dist/` by default
+          path: 'dist/.'
   deploy:
     needs: build
     runs-on: ubuntu-latest
