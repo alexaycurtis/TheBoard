@@ -21,4 +21,7 @@ This is a game because it challenges players to use creativity to create an opti
 - Block that enables the user to draw their own pictures
 - A point system that rates a players board (like symmetry, amount of blocks, etc)
 
+
+[![Athena Award Badge](https://img.shields.io/endpoint?url=https%3A%2F%2Faward.athena.hackclub.com%2Fapi%2Fbadge)](https://award.athena.hackclub.com?utm_source=readme)
+
       
