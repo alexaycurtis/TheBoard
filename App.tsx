@@ -2,11 +2,11 @@ import React, {useState, useRef, useEffect} from 'react';
 import {Plus, Type, Square, Circle, Image, Trash2, Copy, Lock, Unlock} from 'lucide-react';
 
 /*popout editing panel elements, looked up a list*/
-interface Element{
-  id: string;
+interface Element{     
+  id: string;      
   type: 'text' | 'container' | 'image' | 'circle' | 'profile-card' | 'artwork-card' | 'search-pill' | 'info-card' | 'avatar' | 'feature-card' | 'stat-card' | 'tag-pill';
-  x: number;
-  y: number;
+  x: number;         
+  y: number;    
   width: number;
   height: number;
   content?: string;
@@ -127,7 +127,7 @@ const WhiteboardApp: React.FC = () =>{
     //Customize based on type, different kinds of blocks
     switch(type){
       case 'text':
-        newElement ={ ...newElement, width: 200, height: 50 };
+        newElement ={ ...newElement, width: 200, height: 55 };
         break;
       case 'circle':
         newElement ={ ...newElement, width: 150, height: 150, backgroundColor: '#e8d4c4', borderRadius: 50 };
@@ -164,7 +164,7 @@ const WhiteboardApp: React.FC = () =>{
           height: 50,      
           backgroundColor: '#e07856',
           borderRadius: 25,
-          content: 'Title Pill',
+          content: 'Title Text',
           padding: 12,
           fontSize: 14
         };    
@@ -497,7 +497,112 @@ const WhiteboardApp: React.FC = () =>{
   return(
   /*Typed CSS for the block elements*/
 
-  /*Canvas css and card html*/
+   <div className="w-full h-screen bg-gradient-to-br from-slate-800 to-slate-900 flex">
+      {/*added side bar*/}
+      <div className="w-20 bg-slate-900/50 backdrop-blur border-r border-slate-700 flex flex-col items-center py-6 gap-3 overflow-y-auto">
+        {/*basic buttons*/}
+        <div className="text-slate-400 text-xs mb-2">Basic</div>
+        <button
+          onClick={() => addElement('text')}
+          className="w-12 h-12 bg-slate-700 hover:bg-slate-600 rounded-lg flex items-center justify-center transition-colors"
+          title="Add Text"
+        >
+          <Type className="w-5 h-5 text-slate-200" />
+        </button>
+        <button
+          onClick={() => addElement('container')}
+          className="w-12 h-12 bg-slate-700 hover:bg-slate-600 rounded-lg flex items-center justify-center transition-colors"
+          title="Add Container"
+        >
+          <Square className="w-5 h-5 text-slate-200" />
+        </button>
+        <button
+          onClick={() => addElement('circle')}
+          className="w-12 h-12 bg-slate-700 hover:bg-slate-600 rounded-lg flex items-center justify-center transition-colors"
+          title="Add Circle"
+        >
+          <Circle className="w-5 h-5 text-slate-200" />
+        </button>
+        <button
+          onClick={() => addElement('image')}
+          className="w-12 h-12 bg-slate-700 hover:bg-slate-600 rounded-lg flex items-center justify-center transition-colors"
+          title="Add Image"
+        >
+          <Image className="w-5 h-5 text-slate-200" />
+        </button>
+
+        {/*card preset buttons*/}
+        <div className="w-full border-t border-slate-600 my-2"></div>
+        <div className="text-slate-400 text-xs mb-2">Cards</div>
+
+        <button
+          onClick={() => addElement('profile-card')}
+          className="w-12 h-12 bg-blue-700 hover:bg-blue-600 rounded-lg flex items-center justify-center transition-colors text-xs text-white font-bold"
+          title="Add Profile Card"
+        >
+          Profile
+        </button>
+        <button
+          onClick={() => addElement('artwork-card')}
+          className="w-12 h-12 bg-amber-700 hover:bg-amber-600 rounded-lg flex items-center justify-center transition-colors text-xs text-white font-bold"
+          title="Add Artwork Card"
+        >
+          Work Card
+        </button>
+        <button
+          onClick={() => addElement('search-pill')}
+          className="w-12 h-12 bg-orange-700 hover:bg-orange-600 rounded-lg flex items-center justify-center transition-colors text-xs text-white font-bold"
+          title="Add Search Pill"
+        >
+          Bold Title
+        </button>
+        <button
+          onClick={() => addElement('info-card')}
+          className="w-12 h-12 bg-green-700 hover:bg-green-600 rounded-lg flex items-center justify-center transition-colors text-xs text-white font-bold"
+          title="Add Info Card"
+        >
+          Info Card
+        </button>
+        <button
+          onClick={() => addElement('avatar')}
+          className="w-12 h-12 bg-purple-700 hover:bg-purple-600 rounded-lg flex items-center justify-center transition-colors text-xs text-white font-bold"
+          title="Add Avatar"
+        >
+          Avatar Image
+        </button>
+        <button
+          onClick={() => addElement('feature-card')}
+          className="w-12 h-12 bg-indigo-700 hover:bg-indigo-600 rounded-lg flex items-center justify-center transition-colors text-xs text-white font-bold"
+          title="Add Feature Card"
+        >
+          Large Card
+        </button>
+        <button
+          onClick={() => addElement('stat-card')}
+          className="w-12 h-12 bg-cyan-700 hover:bg-cyan-600 rounded-lg flex items-center justify-center transition-colors text-xs text-white font-bold"
+          title="Add Stat Card"
+        >
+          Stat Card
+        </button>
+        <button
+          onClick={() => addElement('tag-pill')}
+          className="w-12 h-12 bg-pink-700 hover:bg-pink-600 rounded-lg flex items-center justify-center transition-colors text-xs text-white font-bold"
+          title="Add Tag Pill"
+        >
+          Text Pill
+        </button>   
+        {/*download button*/}
+        <div className="w-full border-t border-slate-600 my-2"></div>
+        <button
+          onClick={downloadAsImage}
+          className="mt-4 w-12 h-12 bg-green-600 hover:bg-green-500 rounded-lg flex items-center justify-center transition-colors"
+          title="Download Board as Image"
+        >
+          <Image className="w-6 h-6 text-white" />
+        </button>
+     </div>
+          
+     {/*Canvas css and card html*/}
      <div   //canvas
         className="flex-1 relative overflow-auto bg-slate-700"
         onMouseMove={handleMouseMove}
@@ -714,11 +819,11 @@ const WhiteboardApp: React.FC = () =>{
                 <Lock className="w-3 h-3 text-slate-300" />
               </div>
             )}    
-          </div>
+          </div>    
         ))}
         </div>
       </div>
-    //html and css for editing panel next
+    {/*html and css for editing panel next*/}
     {selectedElement &&(
         <div className="w-72 bg-slate-900/50 backdrop-blur border-l border-slate-700 p-4 overflow-y-auto">
           {/*added close panel button*/}  
@@ -896,14 +1001,14 @@ const WhiteboardApp: React.FC = () =>{
                     rows={3}
                     disabled={selectedElement.locked}
                   />
-                </div>
+                </div>                                 
               </>
             )}
           {/*artwork card element*/}
             {(selectedElement.type === 'artwork-card' || selectedElement.type === 'search-pill' || selectedElement.type === 'tag-pill') && (
               <div>
                 <label className="text-slate-300 text-sm mb-2 block">Content Text</label>
-                <input
+                <input         
                   type="text"
                   value={selectedElement.content || ''}
                   onChange={(e) => updateElement(selectedElement.id, { content: e.target.value })}
@@ -914,7 +1019,7 @@ const WhiteboardApp: React.FC = () =>{
             )}
 
           {/*image block element*/}
-            {selectedElement.type === 'image' || selectedElement.type === 'avatar') && (
+            {(selectedElement.type === 'image' || selectedElement.type === 'avatar') && (
               <div>
                 <label className="text-slate-300 text-sm mb-2 block">Upload Image</label>
                 <input
@@ -924,15 +1029,15 @@ const WhiteboardApp: React.FC = () =>{
                     const file = e.target.files?.[0];
                     if(file){
                       handleImageUpload(selectedElement.id, file);
-                    }
+                    }  
                   }}
                   className="w-full px-3 py-2 bg-slate-800 text-slate-200 rounded text-sm file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-slate-700 file:text-slate-200 hover:file:bg-slate-600"
                   disabled={selectedElement.locked}
-                />
-                {selectedElement.imageUrl &&(
+                />                                     
                 {/*remove image button*/}
+                {selectedElement.imageUrl &&(                
                   <button
-                    onClick={() => updateElement(selectedElement.id, {imageUrl: undefined })}
+                    onClick={() => updateElement(selectedElement.id, { imageUrl: undefined })}
                     className="mt-2 w-full px-3 py-2 bg-red-600 hover:bg-red-500 rounded text-white text-sm"
                     disabled={selectedElement.locked}
                   >
@@ -941,8 +1046,7 @@ const WhiteboardApp: React.FC = () =>{
                 )}
               </div>
             )}
-          </div>
-        </div>
+          </div>      
       )}
     </div>
   );                                 
