@@ -1,5 +1,5 @@
-import React, {useState, useRef, useEffect} from 'react';
-import { Plus, Type, Square, Circle, Image, Trash2, Copy, Lock, Unlock} from 'lucide-react';
+import React, {useState, useRef, useEffect, useCallback} from 'react';
+import {Type, Square, Circle, Image, Trash2, Copy, Lock, Unlock} from 'lucide-react';
 
 /*popout editing panel elements, looked up a list*/
 interface Element{     
@@ -38,11 +38,52 @@ const App: React.FC = () =>{
   const [editingId, setEditingId] = useState<string | null>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  /*Also from tutorial - func to update any property of an element*/
+  const updateElement = useCallback((id: string, updates: Partial<Element>) =>{
+    //for each element, implement updates
+    setElements(elements.map(el => el.id === id ? { ...el, ...updates } : el));
+  }); 
+  //deletion
+  const deleteElement = useCallback(() =>{
+    if(selectedId){
+      setElements(elements.filter(el => el.id !== selectedId));
+      setSelectedId(null);
+      setEditingId(null);
+    }
+  }, [selectedId, elements]);
+
+  //copy selected element
+  const duplicateElement = useCallback(() =>{
+    if(selectedId){
+      const element = elements.find(el => el.id === selectedId);
+      if(element){
+        //creation of new element w/ same properties
+        const newElement = {
+          ...element,
+          id: `element-${Date.now()}`,
+          x: element.x + 20,
+          y: element.y + 20,
+          zIndex: elements.length
+        };
+        setElements([...elements, newElement]);
+        setSelectedId(newElement.id);
+      }
+    }
+  }, [selectedId, elements]);
+
+  //locking for elements
+  const toggleLock = useCallback(() =>{
+    if(selectedId){
+      const element = elements.find(el => el.id === selectedId);
+      updateElement(selectedId, {locked: !element?.locked });
+    }
+  }, [selectedId, elements, updateElement]);
 
   //Snap to grid helper function- I want the elements to lock into a grid like google slides
   const snapToGrid = (value: number) =>{
     return Math.round(value / GRID_SIZE) * GRID_SIZE;
   };
+ 
 
   useEffect(() => {
     if (editingId && textareaRef.current){
@@ -98,11 +139,11 @@ const App: React.FC = () =>{
             break;
         }
       }
-    };
+    }
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedId, elements, editingId]);
+  }, [selectedId, elements, editingId, deleteElement, updateElement, duplicateElement, toggleLock]);
 
   /*textbox settings*/
   const addElement = (type: Element['type']) =>{
@@ -339,48 +380,9 @@ const App: React.FC = () =>{
     };
     reader.readAsDataURL(file);
   };
+        
+
   
-  /*Also from tutorial - func to update any property of an element*/
-  const updateElement = (id: string, updates: Partial<Element>) =>{
-    //for each element, implement updates
-    setElements(elements.map(el => el.id === id ? { ...el, ...updates } : el));
-  };        
-
-  //deletion
-  const deleteElement = () =>{
-    if(selectedId){
-      setElements(elements.filter(el => el.id !== selectedId));
-      setSelectedId(null);
-      setEditingId(null);
-    }
-  };
-
-  //copy selected element
-  const duplicateElement = () =>{
-    if(selectedId){
-      const element = elements.find(el => el.id === selectedId);
-      if(element){
-        //creation of new element w/ same properties
-        const newElement = {
-          ...element,
-          id: `element-${Date.now()}`,
-          x: element.x + 20,
-          y: element.y + 20,
-          zIndex: elements.length
-        };
-        setElements([...elements, newElement]);
-        setSelectedId(newElement.id);
-      }
-    }
-  };
-
-  //locking for elements
-  const toggleLock = () =>{
-    if(selectedId){
-      const element = elements.find(el => el.id === selectedId);
-      updateElement(selectedId, {locked: !element?.locked });
-    }
-  };
 
   /*The following code for exporting the board as an image was dervied from tutorial videos and documentation*/
   //export whiteboard as png
@@ -479,7 +481,7 @@ const App: React.FC = () =>{
     }
 
     //download
-    canvas.toBlob((blob) => {
+    canvas.toBlob((blob) =>{
       if(blob){
         //temp download link creation
         const url = URL.createObjectURL(blob);
