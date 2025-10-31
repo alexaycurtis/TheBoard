@@ -1,6 +1,5 @@
 import React, {useState, useRef, useEffect} from 'react';
-import { Plus, Type, Square, Circle, Image, Trash2, Copy, Lock, Unlock} from ' lucide-react ';
-import './App.css';
+import { Plus, Type, Square, Circle, Image, Trash2, Copy, Lock, Unlock} from 'lucide-react';
 
 /*popout editing panel elements, looked up a list*/
 interface Element{     
