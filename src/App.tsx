@@ -97,7 +97,12 @@ const App: React.FC = () =>{
   useEffect(() =>{
     const handleKeyDown = (e: KeyboardEvent) =>{
       if(editingId) return; //Don't use shortcuts while editing, i saw this in a tutorial and it seems beneficial
-
+      //Don't trigger shortcuts if typing in an input/textarea
+      const activeElement = document.activeElement;
+      if(activeElement && (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA')) {
+        return;     
+      }
+      
       if(selectedId){
         const element = elements.find(el => el.id === selectedId);
         if(!element || element.locked) return;
