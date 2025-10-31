@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "github-pages": "^3.0.2"
+  },
+  "private": false,
+  "homepage": "https://alexaycurtis.github.io/TheBoard/"
+}
